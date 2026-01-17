@@ -1,43 +1,68 @@
-import { useState } from "react"
+import { useRef, useState } from "react"
 
 const Calculator = () => {
 
   const[inputVal, setInputVal] = useState("");
+  const[allowDot, setAllowDot] = useState(true);
 
-  const regexEq = /^[0-9+\-X÷*/%.^]*$/;
+  const regexEq = /^[0-9+\-x÷*/%.^]*$/;
   
-  function handleInput(e){
+  function handleInput(e) {
 
-    const value = e.target.value;
-    
-    if (regexEq.test(value)){
+    const val = e.target.value;
+    const lastChar = val.at(-1);
+    const prevChar = inputVal.at(-1);
 
-      setInputVal(value);
+    // allow empty input
+    if (val === "") {
+
+      setInputVal("");
+      return;
     }
+
+    if (!/^[0-9+\-*/%.]*$/.test(val)) return;
+
+    const operators = ["+", "-", "*", "/", "%"];
+
+    if ((operators.includes(prevChar) || prevChar === ".") && (operators.includes(lastChar) || lastChar === ".")){
+
+      return;
+    }
+    
+    if (lastChar === ".") {
+
+      const parts = val.split(/[+\-*/%]/);
+      const currentNumber = parts.at(-1);
+
+      if (currentNumber.split(".").length > 2) 
+        return;
+    }
+
+    setInputVal(val);
   }
 
-  let isDot = false;
   function handleButtons(val){
-
-    if (val === ".")
-      isDot = !isDot; 
-
     
-    if (val === "." && isDot === true)
-      return;
-
     const lastValOfString = inputVal[inputVal.length - 1];
-    
-    if ((lastValOfString === "+" || lastValOfString === "-" || lastValOfString === "X" || lastValOfString === "%" || lastValOfString === "÷" || lastValOfString === ".") && (val === "+" || val === "-" || val === "X" || val === "%" || val === "÷" || val === ".")){
-      
+    if ((["%", "x", "÷", "+", "-", "."].includes(lastValOfString)) && (["%", "x", "÷", "+", "-", "."].includes(val)))
       return;
-    }
     
-    const newValue = inputVal + val;
-    if (regexEq.test(newValue)){
+    if (val === "."){
 
-      setInputVal(newValue);
+      if (!allowDot)
+        return;
+
+      setAllowDot(false);
     }
+
+    if (["%", "x", "÷", "+", "-"].includes(val))
+      setAllowDot(true);  
+
+    const newValue = inputVal + val;
+
+    if (regexEq.test(newValue))
+      setInputVal(newValue);
+
   }
 
   return (
@@ -45,10 +70,11 @@ const Calculator = () => {
     <div className="w-[400px] h-[630px] border-4 border-black rounded-xl m-auto mt-6 p-3">
       
       <input 
+        placeholder="0"
         type="text"
         value={inputVal} 
         onChange={handleInput}
-        className="border-2 border-black rounded-md w-full h-[130px] text-right text-4xl pr-3 pt-14"
+        className="border-2 border-black rounded-md w-full h-[130px] text-right text-4xl pr-3 pt-14 font-bold text-black"
       />
 
       <div className="flex flex-col gap-5 mt-10 place-content-evenly">
@@ -96,9 +122,9 @@ const Calculator = () => {
           > 9</button>
 
           <button 
-            onClick={() => handleButtons("X")} 
+            onClick={() => handleButtons("x")} 
             className="text-[30px] w-[80px] px-4 py-3 rounded-2xl bg-gray-300 hover:bg-slate-500"
-          >X</button>
+          >x</button>
         
         </div>
 
