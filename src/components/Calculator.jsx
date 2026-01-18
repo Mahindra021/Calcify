@@ -1,34 +1,49 @@
-import { useRef, useState } from "react"
+import { useState } from "react"
+import { set } from "react-hook-form";
 
 const Calculator = () => {
 
-  const[inputVal, setInputVal] = useState("");
-  const[allowDot, setAllowDot] = useState(true);
+  const[inputVal, setInputVal] = useState("0");
 
-  const regexEq = /^[0-9+\-x÷*/%.^]*$/;
+  const regexEq = /^[0-9+\-*/%.]*$/;
   
+  function normalizeLeadingZeros(expression) {
+
+    const parts = expression.split(/([+\-*/%])/); 
+    
+    const lastIndex = parts.length - 1;
+    let lastPart = parts[lastIndex];
+
+    if (/^0\./.test(lastPart)) 
+      return expression;
+
+    lastPart = lastPart.replace(/^0+(?=\d)/, "");
+
+    parts[lastIndex] = lastPart;
+
+    return parts.join("");
+  }
+
   function handleInput(e) {
 
     const val = e.target.value;
     const lastChar = val.at(-1);
     const prevChar = inputVal.at(-1);
 
-    // allow empty input
     if (val === "") {
 
       setInputVal("");
       return;
     }
 
-    if (!/^[0-9+\-*/%.]*$/.test(val)) return;
-
-    const operators = ["+", "-", "*", "/", "%"];
-
-    if ((operators.includes(prevChar) || prevChar === ".") && (operators.includes(lastChar) || lastChar === ".")){
-
+    if (!regexEq.test(val)) 
       return;
-    }
-    
+
+    const operators = ["+", "-", "*", "/", "%", "."];
+
+    if ((operators.includes(prevChar)) && (operators.includes(lastChar)))
+      return;
+
     if (lastChar === ".") {
 
       const parts = val.split(/[+\-*/%]/);
@@ -38,32 +53,117 @@ const Calculator = () => {
         return;
     }
 
-    setInputVal(val);
+    const normalizedVal = normalizeLeadingZeros(val);
+    setInputVal(normalizedVal);
   }
 
   function handleButtons(val){
     
-    const lastValOfString = inputVal[inputVal.length - 1];
-    if ((["%", "x", "÷", "+", "-", "."].includes(lastValOfString)) && (["%", "x", "÷", "+", "-", "."].includes(val)))
+    const lastChar = inputVal.at(-1);
+
+    const operators = ["%", "*", "/", "-", "+", "."];
+
+    if ((operators.includes(lastChar)) && (operators.includes(val)))
       return;
     
     if (val === "."){
 
-      if (!allowDot)
-        return;
+      const parts = inputVal.split(/[+\-*/%]/);
+      const currentNumber = parts.at(-1);
 
-      setAllowDot(false);
+      if (currentNumber.includes("."))
+        return;
     }
 
-    if (["%", "x", "÷", "+", "-"].includes(val))
-      setAllowDot(true);  
-
-    const newValue = inputVal + val;
-
-    if (regexEq.test(newValue))
-      setInputVal(newValue);
-
+    setInputVal(prev => normalizeLeadingZeros(prev + val));
   }
+
+  function handleCalculation(){
+
+    let str = inputVal;
+    let numbers = str.split(/[+\-*/%]/).map(Number);
+    let operators = str.match(/[+\-*/%]/g);
+
+    if (numbers.some(isNaN)){
+
+      setInputVal("Error");
+      return;
+    }
+
+    if (!operators){
+
+      setInputVal(String((numbers[0]) || 0));
+      return;
+    }
+
+    for (let i = 0; i < operators.length; i++){
+
+      let result;
+
+      if (operators[i] === "*"){
+
+        result = numbers[i] * numbers[i + 1];
+      }else if (operators[i] === "/"){
+
+        if (numbers[i + 1] === 0) {
+
+          setInputVal("Infinity");
+          return;
+        }
+
+        result = numbers[i] / numbers[i + 1];
+      }else if (operators[i] === "%"){
+
+        result = numbers[i] % numbers[i + 1];
+      }else {
+
+        continue;
+      }
+
+      numbers.splice(i, 2, result);
+      operators.splice(i, 1);
+      i--;
+    }
+
+    let finalResult = numbers[0];
+
+    for (let i = 0; i < operators.length; i++){
+
+      if (operators[i] === "+")
+        finalResult += numbers[i + 1];
+      else if (operators[i] === "-")
+        finalResult -= numbers[i + 1];
+    }
+
+    const roundedResult = Number(finalResult.toFixed(10));
+    setInputVal(String(roundedResult));
+  }
+
+  function handlesSingleDelete(){
+
+    let newString = inputVal.slice(0, -1);
+
+    setInputVal(newString);
+  }
+
+  function handleEntierDelete(){
+
+    setInputVal("");
+  }
+
+  // Using JavaScript’s parser
+  // function handleCalculation() {
+
+  //   try {
+
+  //     const result = Function("return " + inputVal)();
+  //     setInputVal(String(result));
+  //   } catch {
+
+  //     setInputVal("Error");
+  //   }
+  // }
+
 
   return (
 
@@ -82,12 +182,12 @@ const Calculator = () => {
         <div className="flex gap-5 place-content-between">
 
           <button 
-            
+            onClick={handleEntierDelete}
             className="text-[30px] w-[80px] px-4 py-3 rounded-2xl bg-gray-300 hover:bg-slate-500"
           >AC</button>
 
           <button 
-
+            onClick={handlesSingleDelete}
             className="text-[30px] w-[80px] px-4 py-3 rounded-2xl bg-gray-300 hover:bg-slate-500"
           >C</button>
 
@@ -97,7 +197,7 @@ const Calculator = () => {
           >%</button>
           
           <button 
-            onClick={() => handleButtons("÷")} 
+            onClick={() => handleButtons("/")} 
             className="text-[30px] w-[80px] px-4 py-3 rounded-2xl bg-gray-300 hover:bg-slate-500"
           >÷</button>
 
@@ -122,7 +222,7 @@ const Calculator = () => {
           > 9</button>
 
           <button 
-            onClick={() => handleButtons("x")} 
+            onClick={() => handleButtons("*")} 
             className="text-[30px] w-[80px] px-4 py-3 rounded-2xl bg-gray-300 hover:bg-slate-500"
           >x</button>
         
@@ -197,7 +297,7 @@ const Calculator = () => {
           >.</button>
 
           <button 
-
+            onClick={handleCalculation}
             className="text-[30px] w-[80px] px-4 py-3 rounded-2xl bg-gray-300 hover:bg-slate-500"
           >=</button>
         </div>
