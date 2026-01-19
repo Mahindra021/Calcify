@@ -1,5 +1,4 @@
 import { useState } from "react"
-import { set } from "react-hook-form";
 
 const Calculator = () => {
 
@@ -148,7 +147,7 @@ const Calculator = () => {
 
   function handleEntierDelete(){
 
-    setInputVal("");
+    setInputVal("0");
   }
 
   // Using JavaScript’s parser
