@@ -121,7 +121,7 @@ const DiscountConverter = () => {
       <div className='m-10 text-center text-[25px] font-semibold'>
 
         <h1 className='text-[30px] flex place-content-center'>
-          Know The Discount -
+          Find The Discount -
           <span className='text-[17px] place-content-center'>
           (You Can Enter Discount between 0-99 Only)
           </span>
