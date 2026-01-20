@@ -21,6 +21,12 @@ const LengthConverter = () => {
     const val = e.target.value;
     const lastChar = val.at(-1);
 
+    if (val === "") {
+
+      setInputValue("");
+      return;
+    }
+
     if (!regexEq.test(val))
       return;
 
@@ -36,6 +42,19 @@ const LengthConverter = () => {
     setInputValue(newVal);
   }
   
+  function formatResult(num) {
+
+    if (num === 0) 
+      return "0";
+
+    if (num >= 1e15 || num < 1e-15) {
+
+      return num.toExponential(15); 
+    }
+
+    return Number(num.toFixed(15)).toString();
+  }
+
   function handleConvert(){
 
     if (!inputValue){
@@ -46,15 +65,15 @@ const LengthConverter = () => {
 
     const factor = {km : 1000, m : 1, dm : 0.1, cm : 0.01, mm : 0.001, µm : 0.000001, nm : 0.000000001, pm : 0.000000000001};
 
-    const valueInMillimeter = Number(inputValue) * factor[fromUnit];
-    const toRequiredUnit = valueInMillimeter / factor[toUnit];
+    const valueInMeters = Number(inputValue) * factor[fromUnit];
+    const toRequiredUnit = valueInMeters / factor[toUnit];
 
-    setResultantValue(Number(toRequiredUnit.toFixed(6).toString()));
+    setResultantValue(formatResult(toRequiredUnit));
   }
 
   function handleSingleDelete(){
 
-    let newString = inputValue.slice(0, -1);
+    let newString = normalizeNumber(inputValue.slice(0, -1));
 
     setInputValue(newString);
   }
@@ -83,15 +102,17 @@ const LengthConverter = () => {
               onChange={(e) => setFromUnit(e.target.value)} 
               className='w-[250px] px-3 py-2 border-2 border-black rounded-lg'
             >
-              <option value={"km"}>Kilometer (Km)</option>
+              <option value={"km"}>Kilometer (KM)</option>
               <option value={"m"}>Meter (M)</option>
-              <option value={"dm"}>Decimeter (Dm)</option>
-              <option value={"cm"}>Centimeter (Cm)</option>
+              <option value={"dm"}>Decimeter (DM)</option>
+              <option value={"cm"}>Centimeter (CM)</option>
               <option value={"mm"}>Millimeter (MM)</option>
               <option value={"µm"}>Micrometer (µM)</option>
               <option value={"nm"}>Nanometer (NM)</option>
               <option value={"pm"}>Picometer (PC)</option>
             </select>
+
+            <p className='text-center mt-3'>From</p>
 
             {/* First Input  */}
             <input 
@@ -112,15 +133,17 @@ const LengthConverter = () => {
               onChange={(e) => setToUnit(e.target.value)}
               className='w-[250px] px-3 py-2 border-2 border-black rounded-lg'
             >
-              <option value={"km"}>Kilometer (Km)</option>
+              <option value={"km"}>Kilometer (KM)</option>
               <option value={"m"}>Meter (M)</option>
-              <option value={"dm"}>Decimeter (Dm)</option>
-              <option value={"cm"}>Centimeter (Cm)</option>
+              <option value={"dm"}>Decimeter (DM)</option>
+              <option value={"cm"}>Centimeter (CM)</option>
               <option value={"mm"}>Millimeter (MM)</option>
               <option value={"µm"}>Micrometer (µM)</option>
               <option value={"nm"}>Nanometer (NM)</option>
               <option value={"pm"}>Picometer (PC)</option>
             </select>   
+
+            <p className='text-center mt-3'>To</p>
 
             {/* Second Input  */}
             <input 

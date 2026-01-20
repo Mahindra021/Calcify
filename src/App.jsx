@@ -12,7 +12,6 @@ import DiscountConverter from './components/DiscountConverter';
 import VolumeConverter from './components/VolumeConverter';
 import SpeedConverter from './components/SpeedConverter';
 import TemperatureConverter from './components/TemperatureConverter';
-import BMIConverter from './components/BMIConverter';
 
 const router = createBrowserRouter(
   [
@@ -103,15 +102,7 @@ const router = createBrowserRouter(
           <NavBar />
           <TemperatureConverter/>
         </div>
-    },
-    {
-      path: '/conversions/bmi',
-      element:
-        <div>
-          <NavBar />
-          <BMIConverter/>
-        </div>
-    },
+    }
   ]
 );
 

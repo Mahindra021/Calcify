@@ -28,16 +28,16 @@ const Conversion = () => {
           </li>
 
           <li>
-            <NavLink to={'/conversions/area'} className="w-[250px] flex flex-col border-2 cursor-pointer border-black p-5 rounded-xl text-[30px] font-semibold items-center hover:bg-neutral-300">
-              <Square/>
-              Area
+            <NavLink to={'/conversions/time'} className="w-[250px] flex flex-col border-2 cursor-pointer border-black p-5 rounded-xl text-[30px] font-semibold items-center hover:bg-neutral-300">
+              <Clock/>
+              Time
             </NavLink>
           </li>
 
           <li>
-            <NavLink to={'/conversions/time'} className="w-[250px] flex flex-col border-2 cursor-pointer border-black p-5 rounded-xl text-[30px] font-semibold items-center hover:bg-neutral-300">
-              <Clock/>
-              Time
+            <NavLink to={'/conversions/area'} className="w-[250px] flex flex-col border-2 cursor-pointer border-black p-5 rounded-xl text-[30px] font-semibold items-center hover:bg-neutral-300">
+              <Square/>
+              Area
             </NavLink>
           </li>
 
@@ -48,10 +48,10 @@ const Conversion = () => {
             </NavLink>
           </li>
 
-          <li>
-            <NavLink to={'/conversions/discount'} className="w-[250px] flex flex-col border-2 cursor-pointer border-black p-5 rounded-xl text-[30px] font-semibold items-center hover:bg-neutral-300">
-              <Percent/>
-              Discount
+           <li>
+            <NavLink to={'/conversions/temperature'} className="w-[250px] flex flex-col border-2 cursor-pointer border-black p-5 rounded-xl text-[30px] font-semibold items-center hover:bg-neutral-300">
+              <Thermometer/>
+              Temperature
             </NavLink>
           </li>
           
@@ -70,18 +70,11 @@ const Conversion = () => {
           </li>
           
           <li>
-            <NavLink to={'/conversions/temperature'} className="w-[250px] flex flex-col border-2 cursor-pointer border-black p-5 rounded-xl text-[30px] font-semibold items-center hover:bg-neutral-300">
-              <Thermometer/>
-              Temperature
+            <NavLink to={'/conversions/discount'} className="w-[250px] flex flex-col border-2 cursor-pointer border-black p-5 rounded-xl text-[30px] font-semibold items-center hover:bg-neutral-300">
+              <Percent/>
+              Discount
             </NavLink>
           </li>
-          
-          {/* <li>
-            <NavLink to={'/conversions/bmi'} className="w-[250px] flex flex-col border-2 cursor-pointer border-black p-5 rounded-xl text-[30px] font-semibold items-center hover:bg-neutral-300">
-              <User/>
-              BMI
-            </NavLink>
-          </li> */}
         
         </ul>
       
